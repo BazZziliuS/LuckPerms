@@ -70,8 +70,8 @@ public class NeoForgeConnectionListener extends AbstractConnectionListener {
             return;
         }
 
-        String username = gameProfile.name();
-        UUID uniqueId = gameProfile.id();
+        String username = gameProfile.getName();
+        UUID uniqueId = gameProfile.getId();
 
         if (this.plugin.getConfiguration().get(ConfigKeys.DEBUG_LOGINS)) {
             this.plugin.getLogger().info("Processing pre-login (sync phase) for " + uniqueId + " - " + username);
@@ -122,17 +122,17 @@ public class NeoForgeConnectionListener extends AbstractConnectionListener {
         GameProfile profile = player.getGameProfile();
 
         if (this.plugin.getConfiguration().get(ConfigKeys.DEBUG_LOGINS)) {
-            this.plugin.getLogger().info("Processing post-login for " + profile.id() + " - " + profile.name());
+            this.plugin.getLogger().info("Processing post-login for " + profile.getId() + " - " + profile.getName());
         }
 
-        User user = this.plugin.getUserManager().getIfLoaded(profile.id());
+        User user = this.plugin.getUserManager().getIfLoaded(profile.getId());
 
         if (user == null) {
-            if (!getUniqueConnections().contains(profile.id())) {
-                this.plugin.getLogger().warn("User " + profile.id() + " - " + profile.name() +
+            if (!getUniqueConnections().contains(profile.getId())) {
+                this.plugin.getLogger().warn("User " + profile.getId() + " - " + profile.getName() +
                         " doesn't have data pre-loaded, they have never been processed during pre-login in this session.");
             } else {
-                this.plugin.getLogger().warn("User " + profile.id() + " - " + profile.name() +
+                this.plugin.getLogger().warn("User " + profile.getId() + " - " + profile.getName() +
                         " doesn't currently have data pre-loaded, but they have been processed before in this session.");
             }
 
@@ -151,7 +151,7 @@ public class NeoForgeConnectionListener extends AbstractConnectionListener {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         ServerPlayer player = (ServerPlayer) event.getEntity();
-        handleDisconnect(player.getGameProfile().id());
+        handleDisconnect(player.getGameProfile().getId());
     }
 
 }

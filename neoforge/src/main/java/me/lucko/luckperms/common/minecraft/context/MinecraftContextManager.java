@@ -23,30 +23,14 @@
  *  SOFTWARE.
  */
 
-package me.lucko.luckperms.neoforge.context;
+package me.lucko.luckperms.common.minecraft.context;
 
-import me.lucko.luckperms.common.context.manager.SimpleContextManager;
-import me.lucko.luckperms.common.minecraft.context.MinecraftContextManager;
-import me.lucko.luckperms.neoforge.LPNeoForgePlugin;
-import net.luckperms.api.query.QueryOptions;
+import me.lucko.luckperms.common.context.manager.ContextManager;
+import net.luckperms.api.query.OptionKey;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.UUID;
+public interface MinecraftContextManager extends ContextManager<ServerPlayer, ServerPlayer> {
 
-public class NeoForgeContextManager extends SimpleContextManager<ServerPlayer, ServerPlayer> implements MinecraftContextManager {
-    public NeoForgeContextManager(LPNeoForgePlugin plugin) {
-        super(plugin, ServerPlayer.class, ServerPlayer.class);
-    }
+    OptionKey<Boolean> INTEGRATED_SERVER_OWNER = OptionKey.of("integrated_server_owner", Boolean.class);
 
-    @Override
-    public UUID getUniqueId(ServerPlayer player) {
-        return player.getUUID();
-    }
-
-    @Override
-    public void customizeQueryOptions(ServerPlayer subject, QueryOptions.Builder builder) {
-        if (subject.level().getServer().isSingleplayerOwner(subject.getGameProfile())) {
-            builder.option(INTEGRATED_SERVER_OWNER, true);
-        }
-    }
 }

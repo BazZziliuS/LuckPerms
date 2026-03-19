@@ -36,7 +36,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.players.ServerOpList;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
@@ -71,9 +71,10 @@ public class NeoForgePlatformListener {
     }
 
     @SubscribeEvent
-    public void onAddReloadListener(AddServerReloadListenersEvent event) {
-        Commands commands = event.getServerResources().getCommands();
-        BrigadierInjector.inject(this.plugin, commands.getDispatcher());
+    public void onAddReloadListener(AddReloadListenerEvent event) {
+        this.plugin.getBootstrap().getServer().ifPresent(server -> {
+            BrigadierInjector.inject(this.plugin, server.getCommands().getDispatcher());
+        });
     }
 
     @SubscribeEvent

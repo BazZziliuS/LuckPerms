@@ -1,22 +1,2 @@
-plugins {
-    alias(libs.plugins.loom)
-}
-
-sourceCompatibility = 21
-targetCompatibility = 21
-
-repositories {
-    maven { url 'https://maven.fabricmc.net/' }
-}
-
-dependencies {
-    // https://modmuss50.me/fabric.html
-    minecraft 'com.mojang:minecraft:1.21.11'
-    mappings loom.officialMojangMappings()
-
-    implementation project(':common')
-}
-
-remapJar {
-    targetNamespace = 'named'
-}
+// This module has been merged into the neoforge module.
+// Sources are now in neoforge/src/main/java/me/lucko/luckperms/common/minecraft/

@@ -33,20 +33,19 @@ import net.luckperms.api.messenger.IncomingMessageConsumer;
 import net.luckperms.api.messenger.Messenger;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.HandlerThread;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PluginMessageMessenger extends AbstractPluginMessageMessenger implements Messenger {
-    private static final Identifier CHANNEL_ID = Identifier.parse(AbstractPluginMessageMessenger.CHANNEL);
+    private static final ResourceLocation CHANNEL_ID = ResourceLocation.parse(AbstractPluginMessageMessenger.CHANNEL);
     private static final CustomPacketPayload.Type<MessageWrapper> PAYLOAD_TYPE = new CustomPacketPayload.Type<>(CHANNEL_ID);
 
     private final LPNeoForgePlugin plugin;
@@ -58,7 +57,7 @@ public class PluginMessageMessenger extends AbstractPluginMessageMessenger imple
 
     @SubscribeEvent
     private void register(final RegisterPayloadHandlersEvent event) {
-        event.registrar("1").executesOn(HandlerThread.NETWORK).commonBidirectional(
+        event.registrar("1").optional().commonBidirectional(
                 PAYLOAD_TYPE,
                 StreamCodec.of(
                         (bytebuf, wrapper) -> bytebuf.writeBytes(wrapper.bytes),

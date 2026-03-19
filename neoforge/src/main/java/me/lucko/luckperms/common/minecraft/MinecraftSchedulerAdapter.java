@@ -23,30 +23,22 @@
  *  SOFTWARE.
  */
 
-package me.lucko.luckperms.neoforge.context;
+package me.lucko.luckperms.common.minecraft;
 
-import me.lucko.luckperms.common.context.manager.SimpleContextManager;
-import me.lucko.luckperms.common.minecraft.context.MinecraftContextManager;
-import me.lucko.luckperms.neoforge.LPNeoForgePlugin;
-import net.luckperms.api.query.QueryOptions;
-import net.minecraft.server.level.ServerPlayer;
+import me.lucko.luckperms.common.plugin.scheduler.AbstractJavaScheduler;
 
-import java.util.UUID;
+import java.util.concurrent.Executor;
 
-public class NeoForgeContextManager extends SimpleContextManager<ServerPlayer, ServerPlayer> implements MinecraftContextManager {
-    public NeoForgeContextManager(LPNeoForgePlugin plugin) {
-        super(plugin, ServerPlayer.class, ServerPlayer.class);
+public class MinecraftSchedulerAdapter extends AbstractJavaScheduler {
+    private final Executor sync;
+
+    public MinecraftSchedulerAdapter(MinecraftLuckPermsBootstrap bootstrap) {
+        super(bootstrap);
+        this.sync = r -> bootstrap.getServer().orElseThrow(() -> new IllegalStateException("Server not ready")).executeBlocking(r);
     }
 
     @Override
-    public UUID getUniqueId(ServerPlayer player) {
-        return player.getUUID();
-    }
-
-    @Override
-    public void customizeQueryOptions(ServerPlayer subject, QueryOptions.Builder builder) {
-        if (subject.level().getServer().isSingleplayerOwner(subject.getGameProfile())) {
-            builder.option(INTEGRATED_SERVER_OWNER, true);
-        }
+    public Executor sync() {
+        return this.sync;
     }
 }

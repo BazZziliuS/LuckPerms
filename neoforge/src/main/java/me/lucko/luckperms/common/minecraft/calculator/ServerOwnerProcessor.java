@@ -23,30 +23,27 @@
  *  SOFTWARE.
  */
 
-package me.lucko.luckperms.neoforge.context;
+package me.lucko.luckperms.common.minecraft.calculator;
 
-import me.lucko.luckperms.common.context.manager.SimpleContextManager;
-import me.lucko.luckperms.common.minecraft.context.MinecraftContextManager;
-import me.lucko.luckperms.neoforge.LPNeoForgePlugin;
-import net.luckperms.api.query.QueryOptions;
-import net.minecraft.server.level.ServerPlayer;
+import me.lucko.luckperms.common.cacheddata.result.TristateResult;
+import me.lucko.luckperms.common.calculator.processor.AbstractPermissionProcessor;
+import me.lucko.luckperms.common.calculator.processor.PermissionProcessor;
+import net.luckperms.api.util.Tristate;
 
-import java.util.UUID;
+/**
+ * Permission processor which is added to the owner of an integrated server to simply return true if no other processors match.
+ */
+public class ServerOwnerProcessor extends AbstractPermissionProcessor implements PermissionProcessor {
+    private static final TristateResult TRUE_RESULT = new TristateResult.Factory(ServerOwnerProcessor.class).result(Tristate.TRUE);
 
-public class NeoForgeContextManager extends SimpleContextManager<ServerPlayer, ServerPlayer> implements MinecraftContextManager {
-    public NeoForgeContextManager(LPNeoForgePlugin plugin) {
-        super(plugin, ServerPlayer.class, ServerPlayer.class);
+    public static final ServerOwnerProcessor INSTANCE = new ServerOwnerProcessor();
+
+    private ServerOwnerProcessor() {
+
     }
 
     @Override
-    public UUID getUniqueId(ServerPlayer player) {
-        return player.getUUID();
-    }
-
-    @Override
-    public void customizeQueryOptions(ServerPlayer subject, QueryOptions.Builder builder) {
-        if (subject.level().getServer().isSingleplayerOwner(subject.getGameProfile())) {
-            builder.option(INTEGRATED_SERVER_OWNER, true);
-        }
+    public TristateResult hasPermission(String permission) {
+        return TRUE_RESULT;
     }
 }
